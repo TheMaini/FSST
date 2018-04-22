@@ -1,0 +1,49 @@
+\section{Arbeitsspeicher}
+Im Arbeitsspeicher sind die gerade ausgeführten Programme oder Programmteile und die dabei benötigen Daten enthalten. Der Arbeitsspeicher kann in physikalischen und virtuellen Speicher unterteilt werden. Als physischer Speicher wird die Hardware die direkt über den Adressbus angesprochen werden kann bezeichnet. Der virtuelle Speicher bezeichnet den vom tatsächlich vorhandenen Arbeitsspeicher unabhängigen Adressraum.\\[3mm]
+Bei modernen Computern gibt es oft nicht genug Hauptspeicher für alle
+aktiven Prozesse, also müssen einige von ihnen auf der Festplatte gespeichert
+und bei Bedarf dynamisch in den Arbeitsspeicher zurückgeholt werden. Für diese Art
+von Speicherverwaltung gibt es zwei grundlegende Ansätze. Die einfachere
+Strategie ist das so genannte Swapping, bei dem jeder Prozess komplett in den
+Speicher geladen wird, eine gewisse Zeit laufen darf und anschließend wieder auf
+die Festplatte ausgelagert wird. Bei der anderen Strategie, dem virtuellen
+Speicher, können Programme auch dann laufen, wenn sich nur ein Teil von
+ihnen im Hauptspeicher befindet. 
+\subsection{Swapping}
+Gerade nicht benötigte Daten werden auf eine Festplatte ausgelagert, um Platz im Arbeitsspeicher zu schaffen. Werden sie wieder benötigt, müssen sie wieder geladen werden (Swapping). Der wichtigste Aspekt der realen Speicherverwaltung ist, dass nur wirklich
+vorhandener physikalischer Hauptspeicher benutzt wird. Programme können also
+nicht größer als der zur Verfügung stehende Hauptspeicher sein. Also können in
+der Regel nicht alle Prozesse gleichzeitig im Speicher gehalten werden. 
+\subsection{Virtuelle Speicherverwaltung}
+Die Virtuelle Speicherverwaltung ermöglicht es Prozessen mehr Arbeitsspeicher als physikalisch zur Verfügung steht zu verwenden. Dazu wird der virtuelle Speicher benötigt der mit virtuellen Adressen arbeitet. Diese virtuellen Adressen gehen nun nicht mehr direkt an den Speicherbus sondern an die MMU (memory management unit) welche die virtuellen Adressen auf die physischen abbildet. Durch Swapping ist es möglich, dass der virtuelle Speicher sehr viel größer als der physische Speicher sein kann. Die größe des virtuellen Speichers hängt von der Architektur des Befehlssatzes ab.
+\begin{itemize}
+	\item 32-Bit-Prozessor: maximal $2^{32} Bytes = 4 GB$
+	\item 64-Bit-Prozessor: maximal $2^{64} Bytes= 16 Exabytes = 16 mio. Terrabytes $
+\end{itemize}   
+Zur Organisation des virtuellen Speichers gibt es einerseits den
+segmentorientierten Ansatz, bei dem der Speicher in Einheiten unterschiedlicher
+Größen aufgeteilt ist, und anderseits den seitenorientierten Ansatz, bei dem alle
+Speichereinheiten gleich lang sind.
+\subsection{Paging}
+Paging ist eine Methode zur virtuellen Speicherverwaltung von virtuellem Speicher der nach dem seitenorientierten Ansatz aufgeteilt ist. \\[3mm]
+Begriffserklärung:
+\begin{itemize}
+	\item Seite: Als Seite werden die gleich langen Speichereinheiten im virtuellen Speicher bezeichnet.
+	\item Seitenrahmen: sind die Speichereinheiten im physikalischen Speicher. Sie haben die gleiche Größe und sind gleich aufgeteilt wie die Seiten.
+	\item Seitentabelle: Enthält Informationen welche Seite zu welchem Seitenrahmen gehört.  
+\end{itemize}
+Ein Prozess möchte auf den Arbeitsspeicher zugreifen. Er erhält eine virtuelle Adresse vom Betriebssystem. Diese Adresse enthält eine virtuelle Seitennummer über die die entsprechende Seite in der Seitentabelle lokalisiert werden kann. Der Eintrag in der Seitentabelle enthält einen Verweis auf den entsprechenden Seitenrahmen im physikalischen Speicher. 
+\paragraph{Seitenfehler}
+Wenn ein Prozess eine Adresse anspricht, die nicht im Arbeitsspeicher geladen ist, erzeugt die MMU einen sogenannten Seitenfehler (pagefault), dessen Behandlung vom Betriebssystem übernommen wird. Für einen Seitenfehler gibt es zwei generelle Ursachen:
+\begin{itemize}
+	\item Der Seitenrahmen ist vorübergehend nicht im Arbeitsspeicher (ausgelagert).
+	\item Der Prozess greift das erste mal auf die Seite zu.
+	\item Die Seite ist ungültig bzw. der Prozess hat auf eine ihm nicht erlaubte virtuelle Adresse zugegriffen
+\end{itemize}
+Tritt ein solcher Seitenfehler auf wird ein Pagefault-Interrupt, der vom Betriebssystem abgehandelt wird, ausgelöst. Es wird versucht die Seite in einen Seitenrahmen zu laden. Es werden folgende Schritte ausgeführt:
+\begin{itemize}
+	\item Es wird Überprüft ob die Anforderung erlaubt ist.
+	\item Es wird Überprüft ob ein Seitenrahmen im Arbeitsspeicher frei ist. Falls kein freier Seitenrahmen gefunden werden kann, muss zuerst durch Auslagerung des Inhalts eines Seitenrahmens auf die Festplatte Platz geschafft werden.
+	\item Die Informationen werden in den Seitenrahmen kopiert.
+	\item Der zugehörige Eintrag in der Seitentabelle wird angepasst, d. h. die Adresse der Seite wird eingetragen und das entsprechende Present-/Absent-Bit wird gesetzt.
+\end{itemize}

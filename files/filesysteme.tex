@@ -1,0 +1,62 @@
+\section{Dateisysteme}
+	Dateisysteme ist Bestandteil des Betriebssystems und bilden die Schnittstelle zwischen diesem und den Datenträgern. Es legt fest wie Daten gespeichert, gelesen, verändert und gelöscht werden. Das Dateisystem besteht aus Dateien, Verzeichnissen und Adressen über die die Dateien lokalisiert werden.  
+\subsection{Aufgabe}
+\begin{itemize}
+	\item Persistenz
+	\item Konsistenz
+	\item mutual exclusion
+	\item Journaling  
+	\item Fragmentierung klein halten
+	\item Verschlüsselung, Komprimierung, Verstecken, ...
+\end{itemize}
+\paragraph{Persistenz}
+Mit Persistenz ist die Fähigkeit, Daten über einen längeren Zeitraum (vor allem über einen Programmabbruch hinaus) bereitzuhalten, gemeint. Das bedeutet beispielsweise, dass die Daten auch nach Beenden des Programms vorhanden (gespeichert) bleiben, und bei erneutem Aufruf des Programms wieder rekonstruiert und angezeigt werden können.
+\paragraph{Konsistenz} 
+Konsistenz von Daten bedeutet dass die Korrektheit der gespeicherten Daten gewährleistet wird. Konsistenz hat vor allem Bedeutung bei Verteilten System wie sie beim Cloud-Computing und beim RAID zu finden sind. 
+\paragraph{mutual exclusion}
+Damit ist eine Gruppe von Verfahren gemeint die verhindert, dass nebenläufige Prozesse bzw. Threads gleichzeitig oder zeitlich verschränkt gemeinsam genutzte Datenstrukturen verändern und diese Datenstrukturen somit inkonsistent werden würden. Auch wenn die Aktionen jedes einzelnen Prozesses oder Threads für sich betrachtet konsistenzerhaltend sind.
+\paragraph{Journaling}
+Beim Journaling werden alle Änderungen in einem dafür vorgesehen Speicherbereiche, dem Journal, gespeichert. Damit ist es zu jedem Zeitpunkt möglich, einen konsistenten Zustand der Daten zu rekonstruieren. Befindet sich das Dateisystem in einem inkonsistenten Zustand (erster Schreibvorgang beim Kopieren) und der Computer muss neu gestartet werden (Absturz, Stromausfall), so muss das Dateisystem erst aufwändig auf solche Fehler untersucht werden.( Beim überspringen dieses Vorgangs: schwerwiegende Folgefehler, Datenverlust). \\[3mm]
+Journaling wirkt dem entgegen in dem die Änderungen in das Journal geschrieben werden. Zudem wird aufgezeichnet wie viele Änderungen bereits durchgeführt wurden. Somit kann nach einem System Neustart aus dem Journal entnommen werden wo der Vorgang unterbrochen wurde und an dieser Stelle kann weiter gemacht werden.
+\paragraph{Fragmentierung klein halten}
+Das Dateisystem muss durch verschiedene Strategien Daten Fragmentierung vermeiden.
+\begin{itemize}
+	\item Freilassen von 5 bis 20 Prozent des Speicherplatzes
+	\item Trennen von Programmen und von Nutzerdaten.
+	\item Verwendung einer höheren Blockgröße des Dateisystems
+	\item Parametrierung der Applikationen 
+	\begin{itemize}
+		\item Preallocation (man reserviert vorsorglich schon Blöcke, obwohl diese noch nicht benötigt werden)
+		\item Zerlegung einer Festplatte in Cluster, Blockgruppen, Blöcke
+		\item Spätes Festlegen der zu benutzenden Speicherblöcke (late allocation) statt sofortigen Festlegens (early allocation)
+	\end{itemize}
+\end{itemize}   
+\subsection{Arten von Dateisystemen}
+\subsubsection{Lineare Dateisysteme} Lineare Dateisysteme wurde früher vor allem bei Lochbändern und Lochkarten eingesetzt. Heutzutage finden sie noch Anwendung in der Professionellen Daten Sicherung bei Magnetbändern. Die Dateien liegen in einem einzigen Verzeichnis und können nur sequenziell gelesen und geschrieben werden. Durch die zunehmende
+Anzahl an Daten und die dadurch immer längeren Zugriffszeiten war es
+unvermeidlich ein neues strukturelles Konzept zur Datenorganisation zu entwickeln
+\subsubsection{Hierarchische Dateisysteme}
+Durch größere Datenmengen wurde es schwer den Überblick über die Dateien zu behalten, deshalb wurde das Konzept der Unterverzeichnisse eingeführt. Es existiert ein Wurzelverzeichnis das neben normalen Dateien auch Verweise auf Unterverzeichnisse, welche wiederum Verweise auf Unterverzeichnisse, enthalten können. Dadurch entsteht eine Verzeichnisstruktur, die oft als Verzeichnisbaum dargestellt wird. Da sich eine Hierarchie von Verzeichnissen und Dateien ergibt spricht man von einem Hierarchischen Dateisystem. Die Verzeichnisse werden durch Trennzeichen, welche sich von OS zu OS unterscheiden, getrennt. \\[3mm]
+\textit{C:\textbackslash Dokumente und Einstellungen\textbackslash benutzername\textbackslash Eigene Dateien\textbackslash Texte\textbackslash Brief1.txt}
+\\[3mm]
+Das oben gezeigte Beispiel wird auch Pfad genannt und mit Hilfe von ihm kann durch das Dateisystem navigiert werden.
+\paragraph{Netzwerkdateisysteme}
+Systemaufrufe können auch über ein Netzwerk an einen Server übertragen werden. Dem Client werden dann die angeforderten Daten zurück gesendet. Da die selben Systemaufrufe verwendet werden unterscheidet sich der Zugriff für den Client nicht von einem Lokalen Dateisystem. \\[3mm]
+\uline{Globale- oder Cluster-Dateisysteme:} sind Dateisysteme auf die mehrere Clients parallel Zugriff haben. Dazu werden Metadaten-Server eingesetzt. Er erhält alle Zugriffe und stellt sicher dass kein Datenverlust durch das Überschreiben von Dateien auftritt. Der eigentliche Datenverkehr erfolgt dann über ein SAN(Storage Area Network). Für diese Dateisysteme werden spezielle Netzwerkprotokolle verwendet.
+\paragraph{Multiple Streams}
+Moderne Dateisysteme speichern Daten nicht in einer Folge von Bytes (Stream) sonder mehrere dieser Folgen (multiple Streams). Dadurch können Teile einer Datei bearbeitet werden, ohne andere Teile verschieben zu müssen. Ein Problem besteht in der Unterstützung von multiplen Streams. Daten gehen beim Transfer auf andere Dateisystem verloren.
+\subsubsection{Assoziative Dateiverwaltung}
+Diese werden häufig fälschlicherweise als Datenbankdateisysteme oder SQL-Dateisysteme bezeichnet, hierbei handelt es sich eigentlich nicht um Dateisysteme, sondern um Informationen eines Dateisystems, die in aufgewerteter Form in einer Datenbank gespeichert und in, für den Anwender intuitiver Form, über das virtuelle Dateisystem des Betriebssystems dargestellt werden.
+\subsection{Dateisystem Beispiele}
+\paragraph{NTFS:} Im Vergleich zum Dateisystem FAT bietet NTFS unter anderem einen gezielten Zugriffsschutz auf Dateiebene sowie größere Datensicherheit durch Journaling. Allerdings ist keine so breite Kompatibilität gegeben wie bei FAT. Ein weiterer Vorteil von NTFS ist, dass die Dateigröße nicht wie bei FAT auf 4,3 GB beschränkt ist sondern auf 17 TB in der aktuellen Version (NTFS 3.1).\\[3mm]
+Bei NTFS werden alle Informationen zu Dateien in einer Datei, dem Master File Table (MFT) gespeichert. In dieser Datei befinden sich die Einträge, welche Blöcke zu welcher Datei gehören, die Zugriffsberechtigungen und die Attribute.\\
+Attribute unter NTFS:
+\begin{itemize}
+	\item Dateigröße
+	\item Datum der Dateierstellung
+	\item Datum der letzten Änderung
+	\item Freigabe
+	\item Dateityp 
+	\item Dateiinhalt
+\end{itemize}
+
